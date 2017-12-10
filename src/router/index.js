@@ -28,16 +28,29 @@ export const asyncRouterMap = [
     path: '/payroll',
     component: Layout,
     name: 'payroll',
-    children: [{
-      path: 'index',
-      component: _import('payroll/index'),
-      name: 'order',
-      meta: {
-        title: '薪资列表',
-        icon: 'credit-card-alt',
-        noCache: false
+    redirect: 'payroll/index',
+    children: [
+      {
+        path: 'index',
+        component: _import('payroll/index'),
+        name: 'payroll',
+        meta: {
+          title: '薪资列表',
+          icon: 'credit-card-alt',
+          noCache: false
+        }
+      },
+      {
+        path: 'detail/:id',
+        component: _import('payroll/detail'),
+        name: 'detail',
+        meta: {
+          title: '薪资详情',
+          icon: 'credit-card-alt',
+          noCache: false
+        }
       }
-    }]
+    ]
   }
 ]
 

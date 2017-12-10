@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Message } from 'element-ui'
+import { Toast } from 'mint-ui'
 import store from '@/store'
 import { getToken, checkResponse } from 'assets/js/util/auth'
 // 创建axios实例
@@ -56,10 +56,10 @@ service.interceptors.response.use(
 //     }
   error => {
     console.log('err' + error)// for debug
-    Message({
+    Toast({
       message: error.message,
-      type: 'error',
-      duration: 5 * 1000
+      position: 'top',
+      duration: 3000
     })
     return Promise.reject(error)
   }

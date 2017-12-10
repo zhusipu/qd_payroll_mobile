@@ -1,6 +1,7 @@
 import Cookies from 'js-cookie'
 import store from '@/store'
 const TokenKey = 'mobile-token'
+const TwoTokenKey = 'twoToken'
 
 export function getToken () {
   return Cookies.get(TokenKey)
@@ -12,6 +13,14 @@ export function setToken (token) {
 
 export function removeToken () {
   return Cookies.remove(TokenKey)
+}
+
+export function getTwoToken () {
+  return Cookies.get(TwoTokenKey)
+}
+
+export function setTwoToken (token) {
+  return Cookies.set(TwoTokenKey, token)
 }
 
 export function checkResponse (res) {

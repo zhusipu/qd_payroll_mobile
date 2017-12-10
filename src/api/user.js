@@ -7,6 +7,22 @@ export function getUserInfo (token) {
     params: { token }
   })
 }
+
+export function twoSignin (password) {
+  return fetch({
+    url: '/user/twoSignin',
+    method: 'post',
+    params: { password }
+  })
+}
+
+export function GetTwoTokenInfo () {
+  return fetch({
+    url: '/user/GetTwoTokenInfo',
+    method: 'get'
+  })
+}
+
 export function getUserId () {
   return fetch({
     url: '/User/getUid',

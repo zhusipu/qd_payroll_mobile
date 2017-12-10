@@ -1,5 +1,5 @@
-import { loginByUsername, logout, getUserInfo } from 'api/user'
-import { getToken, setToken, removeToken } from 'assets/js/util/auth'
+import { loginByUsername, logout, getUserInfo, GetTwoTokenInfo } from 'api/user'
+import { getToken, setToken, removeToken, getTwoToken, setTwoToken } from 'assets/js/util/auth'
 
 import {ERR_OK} from 'api/config.js'
 
@@ -9,18 +9,23 @@ const user = {
     status: '',
     code: '',
     token: getToken(),
+    twotoken: getTwoToken(),
     name: '',
     avatar: '',
     introduction: '',
     roles: [],
     setting: {
       articlePlatform: []
-    }
+    },
+    issetpassword: 0
   },
 
   mutations: {
     SET_TOKEN: (state, token) => {
       state.token = token
+    },
+    SET_TWOTOKEN: (state, token) => {
+      state.twotoken = token
     },
     SET_INTRODUCTION: (state, introduction) => {
       state.introduction = introduction
@@ -39,6 +44,9 @@ const user = {
     },
     SET_ROLES: (state, roles) => {
       state.roles = roles
+    },
+    SET_ISSETPASSWORD: (state, roles) => {
+      state.issetpassword = roles
     }
   },
 
@@ -68,13 +76,25 @@ const user = {
         getUserInfo(state.token).then(response => {
           const data = response.data
           commit('SET_NAME', data.data.EMP_NAME)
+          commit('SET_ISSETPASSWORD', data.data.extra.isSetPassword)
           resolve(response)
         }).catch(error => {
           reject(error)
         })
       })
     },
-
+    GetTwoTokenInfo ({ commit, state }) {
+      return new Promise((resolve, reject) => {
+        GetTwoTokenInfo().then(response => {
+          const data = response.data
+          commit('SET_TWOTOKEN', data.data)
+          setTwoToken(response.data.data)
+          resolve(response)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
     // 第三方验证登录
     // LoginByThirdparty({ commit, state }, code) {
     //   return new Promise((resolve, reject) => {
