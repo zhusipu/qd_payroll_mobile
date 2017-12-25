@@ -2,7 +2,7 @@
   <div class="content">
     <template v-if="twotoken">
       <p>最近三个月的薪资列表</p>
-      <mu-table  :showCheckbox="false" tooltipPosition="center" ref="table">
+      <mu-table  :showCheckbox="false" tooltipPosition="center" ref="table" row-click="showDetailRowClick">
         <mu-thead>
           <mu-tr tooltipPosition="center">
             <mu-th>ID</mu-th>
@@ -11,28 +11,47 @@
           </mu-tr>
         </mu-thead>
         <mu-tbody>
-          <mu-tr v-for="item in payrollList" :key="item.id" >
-            <mu-td>{{item.id}}</mu-td>
-            <mu-td>{{item.date}}</mu-td>
-            <mu-td ><span @click="showDetail(item.id)">详情</span></mu-td>
+          <mu-tr v-for="item in payrollList" :key="item.id">
+            <mu-td @click="showDetail(item.id)">{{item.id}}</mu-td>
+            <mu-td @click="showDetail(item.id)">{{item.date}}</mu-td>
+            <mu-td @click="showDetail(item.id)"><span>薪资详情</span></mu-td>
           </mu-tr>
         </mu-tbody>
       </mu-table>
     </template>
     <template v-else-if="!twotoken && !issetpassword">
       <div class="setpassword">
-        <p>您是初次访问该系统，请设置一个新密码。</p>
-        <mu-text-field label="身份证号" :autofocus="true" hintText="请输入您的身份证号" name="cardNo" v-model="form.cardNo" :errorText="form.errorText.cardNo" labelFloat/>
-        <mu-text-field label="新密码" hintText="请输入一个新的密码" v-model="form.password" type="password" :errorText="form.errorText.password"  labelFloat/>
-        <mu-text-field label="确认密码" hintText="请再次输入新密码" v-model="form.password2" type="password" :errorText="form.errorText.password2" labelFloat/>
-        <mu-raised-button label="确认" class="demo-raised-button" @click="_setPassword" primary/>
+        <mu-row gutter>
+          <mu-col width="100" tablet="100" desktop="100"><p>您是初次访问该系统，请设置一个新密码。</p></mu-col>
+          <mu-col width="100" tablet="100" desktop="100">
+            <mu-text-field label="身份证号" fullWidth :autofocus="true" hintText="请输入您的身份证号" name="cardNo" v-model="form.cardNo" :errorText="form.errorText.cardNo" labelFloat/>
+          </mu-col>
+          <mu-col width="100" tablet="100" desktop="100">
+            <mu-text-field label="新密码" fullWidth hintText="请输入一个新的密码" v-model="form.password" type="password" :errorText="form.errorText.password"  labelFloat/>
+          </mu-col>
+          <mu-col width="100" tablet="100" desktop="100">
+            <mu-text-field label="确认密码" fullWidth hintText="请再次输入新密码" v-model="form.password2" type="password" :errorText="form.errorText.password2" labelFloat/>
+          </mu-col>
+          <mu-col width="100" tablet="100" desktop="100">
+            <mu-raised-button label="确认" class="demo-raised-button" @click="_setPassword" primary/>
+          </mu-col>
+        </mu-row>
       </div>
     </template>
     <template v-else>
       <div class="setpassword">
-        <p>验证</p>
-        <mu-text-field label="密码" hintText="请输入的密码" v-model="twoPassword" type="password" :errorText="twoPasswordErrorText"  labelFloat/>
-        <mu-raised-button label="确认" class="demo-raised-button" @click="_twoSignin" primary/>
+        <mu-row gutter>
+          <mu-col width="100" tablet="100" desktop="100"><p>验证</p></mu-col>
+          <mu-col width="100" tablet="100" desktop="100">
+            <mu-text-field label="身份证号" fullWidth :autofocus="true" hintText="请输入您的身份证号" name="cardNo" v-model="twoCardNo" :errorText="twoCardNoErrorText" labelFloat/>
+          </mu-col>
+          <mu-col width="100" tablet="100" desktop="100">
+            <mu-text-field label="密码" fullWidth hintText="请输入的密码" v-model="twoPassword" type="password" :errorText="twoPasswordErrorText"  labelFloat/>
+          </mu-col>
+          <mu-col width="100" tablet="100" desktop="100">
+            <mu-raised-button label="确认" class="demo-raised-button" @click="_twoSignin" primary/>
+          </mu-col>
+        </mu-row>
       </div>
     </template>
   </div>
@@ -65,7 +84,9 @@ export default {
         }
       },
       twoPassword: '',
-      twoPasswordErrorText: ''
+      twoPasswordErrorText: '',
+      twoCardNo: '',
+      twoCardNoErrorText: ''
     }
   },
   mounted () {
@@ -78,6 +99,10 @@ export default {
       getList(3).then((res) => {
         if (res.data.code === ERR_OK) {
           this.payrollList = res.data.data.list
+        } else if (res.data.msg === 100) {
+          this.$store.dispatch('LogOutTwoToken').then(res => {
+            this.twotoken = this.$store.getters.twotoken
+          })
         }
       })
     },
@@ -133,14 +158,25 @@ export default {
         path: `/payroll/detail/${id}`
       })
     },
+    showDetailRowClick (row) {
+      console.log('aaa')
+      this.showDetail(row.id)
+    },
     _twoSignin () {
+      var isCardNoResult = this.isCardNo(this.twoCardNo)
+      if (isCardNoResult !== true) {
+        this.twoCardNoErrorText = isCardNoResult
+        return false
+      } else {
+        this.twoCardNoErrorText = ''
+      }
       if (this.twoPassword.length < 6 || this.twoPassword.length > 32) {
         this.twoPasswordErrorText = '密码允许长度为6到32位'
         return false
       } else {
         this.twoPasswordErrorText = ''
       }
-      twoSignin(this.twoPassword).then((res) => {
+      twoSignin(this.twoCardNo, this.twoPassword).then((res) => {
         if (res.data.code === ERR_OK) {
           this.$store.dispatch('GetTwoTokenInfo').then((res) => {
             this.twotoken = this.$store.getters.twotoken
@@ -170,9 +206,6 @@ export default {
 }
 </script>
 <style scoped>
-.setpassword{
-  padding: 20px;
-}
 .content {
   padding: 10px;
 }

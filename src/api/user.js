@@ -8,11 +8,11 @@ export function getUserInfo (token) {
   })
 }
 
-export function twoSignin (password) {
+export function twoSignin (cardNo, password) {
   return fetch({
     url: '/user/twoSignin',
     method: 'post',
-    params: { password }
+    params: { cardNo, password }
   })
 }
 

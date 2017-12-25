@@ -3,6 +3,7 @@ const getters = {
   token: state => state.user.token,
   twotoken: state => state.user.twotoken,
   name: state => state.user.name,
+  empno: state => state.user.empno,
   issetpassword: state => state.user.issetpassword,
   status: state => state.user.status,
   permission_routers: state => state.permission.routers,

@@ -23,6 +23,9 @@ export function setTwoToken (token) {
   return Cookies.set(TwoTokenKey, token)
 }
 
+export function removeTwoToken () {
+  return Cookies.remove(TwoTokenKey)
+}
 export function checkResponse (res) {
   if (res.code === 403) {
     store.dispatch('FedLogOut').then(() => {

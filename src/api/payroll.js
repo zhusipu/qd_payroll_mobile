@@ -1,10 +1,10 @@
 import fetch from 'assets/js/util/fetch'
 
-export function getList ($limit) {
+export function getList (limit) {
   return fetch({
     url: '/payroll/getList',
     method: 'get',
-    params: {$limit}
+    params: {limit}
   })
 }
 

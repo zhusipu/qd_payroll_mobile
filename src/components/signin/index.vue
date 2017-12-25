@@ -1,6 +1,6 @@
 <template>
   <div>
-    拉去用户信息中...
+    拉取用户信息中...
   </div>
 </template>
 <script>

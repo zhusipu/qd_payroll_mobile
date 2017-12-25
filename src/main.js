@@ -11,9 +11,15 @@ import store from './store'
 import './permission'
 import 'vue-awesome/icons'
 import Icon from 'vue-awesome/components/Icon'
+import alimask from 'alimask'
+// var VConsole = require('vconsole')
+// var vConsole = new VConsole()
+// console.log(vConsole)
 Vue.component('icon', Icon)
 Vue.config.productionTip = false
 Vue.use(MuseUI)
+var canvas = alimask('123', { color: '#f6dcd7' })
+console.log(canvas)
 
 /* eslint-disable no-new */
 new Vue({

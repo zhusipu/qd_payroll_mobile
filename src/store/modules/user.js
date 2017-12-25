@@ -1,5 +1,5 @@
 import { loginByUsername, logout, getUserInfo, GetTwoTokenInfo } from 'api/user'
-import { getToken, setToken, removeToken, getTwoToken, setTwoToken } from 'assets/js/util/auth'
+import { getToken, setToken, removeToken, getTwoToken, setTwoToken, removeTwoToken } from 'assets/js/util/auth'
 
 import {ERR_OK} from 'api/config.js'
 
@@ -11,6 +11,7 @@ const user = {
     token: getToken(),
     twotoken: getTwoToken(),
     name: '',
+    empno: '',
     avatar: '',
     introduction: '',
     roles: [],
@@ -38,6 +39,9 @@ const user = {
     },
     SET_NAME: (state, name) => {
       state.name = name
+    },
+    SET_EMPNO: (state, empno) => {
+      state.empno = empno
     },
     SET_AVATAR: (state, avatar) => {
       state.avatar = avatar
@@ -76,6 +80,7 @@ const user = {
         getUserInfo(state.token).then(response => {
           const data = response.data
           commit('SET_NAME', data.data.EMP_NAME)
+          commit('SET_EMPNO', data.data.EMP_NO)
           commit('SET_ISSETPASSWORD', data.data.extra.isSetPassword)
           resolve(response)
         }).catch(error => {
@@ -93,6 +98,14 @@ const user = {
         }).catch(error => {
           reject(error)
         })
+      })
+    },
+    // 登出
+    LogOutTwoToken ({ commit, state }) {
+      return new Promise((resolve, reject) => {
+        commit('SET_TWOTOKEN', '')
+        removeTwoToken()
+        resolve()
       })
     },
     // 第三方验证登录
